@@ -1,0 +1,13 @@
+{
+  "name": "promptbox",
+  "version": "0.1.0",
+  "description": "A local-first AI prompt library with search, tags and favorites.",
+  "type": "commonjs",
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT"
+}

@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="PromptBox 是一个无需安装的 AI 提示词收藏夹，支持搜索、标签、收藏和导入导出。"
+    />
+    <meta name="theme-color" content="#1d7655" />
+    <title>PromptBox · 提示词收藏夹</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231d7655'/%3E%3Cpath d='M10 10h9.6c2.4 0 4.4 2 4.4 4.4 0 2.1-1.5 3.9-3.5 4.3 1.7.5 3 2.1 3 4 0 2.4-2 4.4-4.5 4.4H10z' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M14 14h5.2M14 19h5.2M14 24h7' stroke='white' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E"
+    />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">PB</div>
+          <div class="brand-copy">
+            <h1>PromptBox</h1>
+            <p>提示词收藏夹</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button
+            id="themeToggle"
+            class="icon-btn"
+            type="button"
+            title="切换主题"
+            aria-label="切换主题"
+          ></button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div class="container">
+        <section class="summary" aria-labelledby="pageTitle">
+          <div>
+            <h2 id="pageTitle" class="summary-title">我的收藏</h2>
+            <p class="summary-subtitle">保存在当前设备，随时复制、整理和带走。</p>
+          </div>
+          <div class="summary-stats" aria-label="收藏统计">
+            <span id="totalStat" class="stat-pill">0 条</span>
+            <span id="favoriteStat" class="stat-pill is-favorite">0 收藏</span>
+            <span id="tagStat" class="stat-pill">0 标签</span>
+          </div>
+        </section>
+
+        <section class="toolbar" aria-label="常用操作">
+          <div class="search-field">
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="11" cy="11" r="7"></circle>
+              <path d="m20 20-3.4-3.4"></path>
+            </svg>
+            <input
+              id="searchInput"
+              type="search"
+              placeholder="搜索标题、内容或标签"
+              autocomplete="off"
+            />
+          </div>
+          <div class="toolbar-buttons">
+            <input
+              id="importInput"
+              class="visually-hidden"
+              type="file"
+              accept="application/json,.json"
+              hidden
+            />
+            <button id="importButton" class="btn" type="button" title="导入备份">
+              导入
+            </button>
+            <button id="exportButton" class="btn" type="button" title="导出备份">
+              导出
+            </button>
+            <button id="addButton" class="btn primary" type="button">
+              新建片段
+            </button>
+          </div>
+        </section>
+
+        <section class="filter-bar" aria-label="筛选">
+          <div class="segmented" role="group" aria-label="收藏范围">
+            <button
+              class="segment is-active"
+              type="button"
+              data-view="all"
+              aria-pressed="true"
+            >
+              全部
+            </button>
+            <button
+              class="segment"
+              type="button"
+              data-view="favorite"
+              aria-pressed="false"
+            >
+              已收藏
+            </button>
+          </div>
+          <div id="tagChips" class="tag-chips" aria-label="标签筛选"></div>
+        </section>
+
+        <section id="collection" class="cards-grid" aria-label="片段列表"></section>
+      </div>
+    </main>
+
+    <dialog id="editorDialog" class="editor-dialog">
+      <form id="editorForm" class="editor-form">
+        <div class="dialog-head">
+          <h2 id="editorDialogTitle">新建片段</h2>
+          <button
+            id="closeEditorButton"
+            class="icon-btn"
+            type="button"
+            aria-label="关闭"
+            title="关闭"
+          ></button>
+        </div>
+        <div class="dialog-body">
+          <div class="field">
+            <label for="titleInput">标题</label>
+            <input
+              id="titleInput"
+              name="title"
+              type="text"
+              maxlength="80"
+              required
+              placeholder="例如：把想法改写成口语化表达"
+            />
+          </div>
+          <div class="field">
+            <label for="contentInput">提示词内容</label>
+            <textarea
+              id="contentInput"
+              name="content"
+              required
+              placeholder="把提示词正文粘贴到这里，以后直接复制使用。"
+            ></textarea>
+            <span class="field-hint" id="contentCount">0 字</span>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="tagsInput">标签</label>
+              <input
+                id="tagsInput"
+                name="tags"
+                type="text"
+                placeholder="写作、翻译、分析"
+              />
+              <span class="field-hint">用逗号或空格分隔</span>
+            </div>
+            <label class="switch-field" for="favoriteInput">
+              <input id="favoriteInput" name="favorite" type="checkbox" />
+              <span>设为收藏</span>
+            </label>
+          </div>
+        </div>
+        <div class="dialog-actions">
+          <button id="cancelEditorButton" class="btn" type="button">
+            取消
+          </button>
+          <button class="btn primary" type="submit">保存</button>
+        </div>
+      </form>
+    </dialog>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <script src="js/logic.js" defer></script>
+    <script src="js/app.js" defer></script>
+  </body>
+</html>
